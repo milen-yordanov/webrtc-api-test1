@@ -51,6 +51,7 @@ let localStream;
 let pc1;
 let pc2;
 let videoSender = null;
+let videoTrack = null;
 
 const offerOptions = {
   offerToReceiveAudio: 1,
@@ -204,8 +205,6 @@ function onIceStateChange(pc, event) {
 }
 
 function turnVideoOff() {
-  let videoTrack = videoSender.track;
-
   videoOffButton.disabled = true;
   videoOnButton.disabled = false;
 
@@ -231,18 +230,19 @@ function turnVideoOn() {
       if (videoTracks.length > 0) {
         console.log(`Using video device: ${videoTracks[0].label}`);
       }
-      localStream.addTrack(videoTracks[0]);
+      videoTrack = videoTracks[0];
+      localStream.addTrack(videoTrack);
       localVideo.srcObject = null;
       localVideo.srcObject = localStream;
 
       if(!videoSender)
       {
-        videoSender = pc1.addTrack(videoTracks[0], localStream);
+        videoSender = pc1.addTrack(videoTrack, localStream);
         onNegotiationNeeded();
       }
       else
       {
-        videoSender.replaceTrack(videoTracks[0]);
+        videoSender.replaceTrack(videoTrack);
       }
       videoOffButton.disabled = false;
     })
