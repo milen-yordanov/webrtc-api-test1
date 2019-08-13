@@ -216,8 +216,10 @@ function turnVideoOff() {
   console.assert(localStream.getVideoTracks().length === 0);
 
   localVideo.srcObject = localStream;
+  let videoClone = videoTrack.clone();
   videoTrack.stop();
-  videoSender.replaceTrack(videoTrack);
+  videoClone.stop();
+  videoSender.replaceTrack(videoClone);
 }
 
 function turnVideoOn() {
