@@ -162,6 +162,14 @@ function gotRemoteStream(e) {
     remoteVideo.srcObject = null;
     remoteVideo.srcObject = stream;
   });
+
+  e.track.addEventListener('unmute', () => {
+    console.log('remote track unmuted', e.track);
+    let stream = remoteVideo.srcObject;
+    stream.addTrack(e.track);
+    remoteVideo.srcObject = null;
+    remoteVideo.srcObject = stream;
+  });
 }
 
 function onCreateAnswerSuccess(desc) {
@@ -198,13 +206,7 @@ function onIceStateChange(pc, event) {
 function turnVideoOff() {
   let videoTrack = videoSender.track;
 
-  videoSender.replaceTrack();
-  pc1.removeTrack(videoSender);
-
-  onNegotiationNeeded();
-
   videoOffButton.disabled = true;
-  videoSender = null;
   videoOnButton.disabled = false;
 
   localVideo.srcObject = null;
@@ -215,7 +217,6 @@ function turnVideoOff() {
 
   localVideo.srcObject = localStream;
   videoTrack.stop();
-  videoSender = null;
 }
 
 function turnVideoOn() {
@@ -230,8 +231,16 @@ function turnVideoOn() {
       localStream.addTrack(videoTracks[0]);
       localVideo.srcObject = null;
       localVideo.srcObject = localStream;
-      videoSender = pc1.addTrack(videoTracks[0], localStream);
-      onNegotiationNeeded();
+
+      if(!videoSender)
+      {
+        videoSender = pc1.addTrack(videoTracks[0], localStream);
+        onNegotiationNeeded();
+      }
+      else
+      {
+        videoSender.replaceTrack(videoTracks[0]);
+      }
       videoOffButton.disabled = false;
     })
     .catch(e => alert(`getUserMedia() error: ${e.name}`));
