@@ -198,7 +198,7 @@ function onIceStateChange(pc, event) {
 function turnVideoOff() {
   let videoTrack = videoSender.track;
 
-  videoSender.replaceTrack(null);
+  videoSender.replaceTrack();
   pc1.removeTrack(videoSender);
 
   onNegotiationNeeded();
