@@ -217,6 +217,7 @@ function turnVideoOff() {
 
   localVideo.srcObject = localStream;
   videoTrack.stop();
+  videoSender.replaceTrack(videoTrack);
 }
 
 function turnVideoOn() {
